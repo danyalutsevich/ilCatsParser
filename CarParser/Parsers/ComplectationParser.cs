@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarParser
+namespace CarParser.Parsers
 {
-    internal class Loader
+    internal class ComplectationParser
     {
     }
 }
