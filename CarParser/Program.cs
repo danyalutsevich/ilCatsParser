@@ -23,20 +23,23 @@ namespace CarParser
             var connection = new SqlConnection(ConnectionString);
             connection.Open();
             
-            var contentLoader = new ContentLoader("/toyota/?function=getModels&market=EU");
-            var content = await contentLoader.GetContent();
+            var content = await ContentLoader.GetContent("/toyota/?function=getModels&market=EU");
             var ModelsParser = new ModelsParser(content);
             var models = ModelsParser.Parse();
+            //Model.AddToDatabase(models, connection);
+            Console.WriteLine(models.Count + " items added");
 
-            Model.AddToDatabase(models, connection);
-            
-            
-            Console.WriteLine(models.Count+ " items added");
+            content = await ContentLoader.GetContent("/toyota/?function=getComplectations&market=EU&model=281220&startDate=198210&endDate=198610");
+            var ComplectationsParser = new Parsers.ComplectationParser();
 
-            foreach (var model in models)
+            //var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
+            var complectations = await ComplectationsParser.ParseFromModels(models);
+
+            foreach (var complectation in complectations)
             {
-                //Console.WriteLine(model);
+                Console.WriteLine(complectation.ToString());
             }
+
 
         }
 

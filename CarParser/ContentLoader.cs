@@ -9,19 +9,13 @@ namespace CarParser
 {
     class ContentLoader
     {
-        string BaseUrl { get; set; } = "https://www.ilcats.ru";
-        string Uri { get; set; }
+        private static string BaseUrl { get; set; } = "https://www.ilcats.ru";
 
-        public ContentLoader(string uri)
-        {
-            Uri = uri;
-        }
-
-        public async Task<string> GetContent()
+        public static async Task<string> GetContent(string uri)
         {
             using (var web = new WebClient())
             {
-                var url = $"{BaseUrl}/{Uri}";
+                var url = $"{BaseUrl}/{uri}";
                 var content = await web.DownloadStringTaskAsync(url);
                 return content;
             }
