@@ -14,7 +14,7 @@ namespace CarParser.Models
             Records = new List<string>();
         }
         public string? Title { get; set; }
-        public List<string>? Records { get; set; }  
+        public List<string>? Records { get; set; }
     }
 
     class Complectation
@@ -23,26 +23,48 @@ namespace CarParser.Models
         {
             Columns = new List<Column>();
         }
-        
+
         public List<Column>? Columns { get; set; }
+        public Model model { get; set; }
 
-        public static void AddToDatabase(List<Complectation> complectations, SqlConnection connection)
+        public static void AddToDatabase(Model model, List<Complectation> complectations, SqlConnection connection)
         {
-
-            
-            
-        }
-        
-        public static void CreateTable(Model model, Complectation complectation, SqlConnection connection)
-        {
-            foreach (var column in complectation.Columns)
+            foreach (var complectation in complectations)
             {
-                using (var command = new SqlCommand($"ALTER TABLE @id ADD {column.Title} nvarchar(255)", connection))
+                CreateTable(model, complectation, connection);
+                for (var i = 0; i < complectation.Columns[0].Records.Count; i++)
                 {
-                    command.Parameters.AddWithValue("@id", model.Id);
-
-                    command.ExecuteNonQuery();
+                    var command = new StringBuilder($"INSERT INTO [{model.Id}] VALUES (");
+                    foreach (var column in complectation.Columns)
+                    {
+                        command.Append($"'{column.Records[i]}',");
+                    }
+                    command.Remove(command.Length - 1, 1);
+                    command.Append(")");
+                    var sqlCommand = new SqlCommand(command.ToString(), connection);
+                    sqlCommand.ExecuteNonQuery();
                 }
+            }
+        }
+
+        private static void CreateTable(Model model, Complectation complectation, SqlConnection connection)
+        {
+            try
+            {
+
+                var command = new StringBuilder($"CREATE TABLE [{model.Id}] (");
+                foreach (var column in complectation.Columns)
+                {
+                    command.Append($"[{column.Title}] NVARCHAR(100),");
+                }
+                command.Append(")");
+
+                var sqlCommand = new SqlCommand(command.ToString(), connection);
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -53,7 +75,7 @@ namespace CarParser.Models
             {
                 res.Append(column.Title + " ");
             }
-            for(var i =0;i < Columns[0].Records.Count; i++)
+            for (var i = 0; i < Columns[0].Records.Count; i++)
             {
                 res.Append("\n");
                 foreach (var column in Columns)
@@ -61,7 +83,7 @@ namespace CarParser.Models
                     res.Append(column.Records[i] + " ");
                 }
             }
-            
+
             return res.ToString();
         }
     }

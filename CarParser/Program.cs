@@ -19,10 +19,10 @@ namespace CarParser
 
         static async Task Main()
         {
-            
+
             var connection = new SqlConnection(ConnectionString);
             connection.Open();
-            
+
             var content = await ContentLoader.GetContent("/toyota/?function=getModels&market=EU");
             var ModelsParser = new ModelsParser(content);
             var models = ModelsParser.Parse();
@@ -32,13 +32,15 @@ namespace CarParser
             content = await ContentLoader.GetContent("/toyota/?function=getComplectations&market=EU&model=281220&startDate=198210&endDate=198610");
             var ComplectationsParser = new Parsers.ComplectationParser();
 
-            //var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
-            var complectations = await ComplectationsParser.ParseFromModels(models);
+            var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
+            //var complectations = await ComplectationsParser.ParseFromModels(models);
 
             foreach (var complectation in complectations)
             {
                 Console.WriteLine(complectation.ToString());
             }
+
+            Complectation.AddToDatabase(models.FirstOrDefault(), complectations, connection);
 
 
         }

@@ -54,6 +54,8 @@ namespace CarParser.Parsers
                         }
                     }
                 }
+                complectation.model = model;
+
                 res.Add(complectation);
             }
             return res;
