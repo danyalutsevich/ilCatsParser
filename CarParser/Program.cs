@@ -19,18 +19,20 @@ namespace CarParser
 
         static async Task Main()
         {
-
             var connection = new SqlConnection(ConnectionString);
             connection.Open();
-
+            #region Models
+            Console.WriteLine("Models");
             var content = await ContentLoader.GetContent("/toyota/?function=getModels&market=EU");
             var ModelsParser = new ModelsParser(content);
             var models = ModelsParser.Parse();
             //Model.AddToDatabase(models, connection);
             Console.WriteLine(models.Count + " items added");
-
-            content = await ContentLoader.GetContent("/toyota/?function=getComplectations&market=EU&model=281220&startDate=198210&endDate=198610");
-            var ComplectationsParser = new Parsers.ComplectationParser();
+            #endregion
+            #region Complectations
+            Console.WriteLine("Complectations");
+            content = await ContentLoader.GetContent(models.FirstOrDefault().Link);
+            var ComplectationsParser = new ComplectationParser();
 
             var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
             //var complectations = await ComplectationsParser.ParseFromModels(models);
@@ -38,12 +40,20 @@ namespace CarParser
             foreach (var complectation in complectations)
             {
                 Console.WriteLine(complectation.ToString());
+                complectation.AddToDatabase(connection);
             }
-
-            Complectation.AddToDatabase(models.FirstOrDefault(), complectations, connection);
+            #endregion
+            #region Groups  
+            Console.WriteLine("Groups");
+            var groupParser = new GroupParser();
+            var groups = await groupParser.ParseFromComplectation(complectations.FirstOrDefault());
+            foreach (var group in groups)
+            {
+                Console.WriteLine(group);
+            }
+            #endregion
 
 
         }
-
     }
 }

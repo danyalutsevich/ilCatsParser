@@ -36,7 +36,6 @@ namespace CarParser.Parsers
 
                 foreach (var title in th)
                 {
-                    //Console.WriteLine(title.TextContent);
                     complectation.Columns.Add(new Column { Title = title.TextContent });
                 }
 
@@ -45,16 +44,17 @@ namespace CarParser.Parsers
                     var tds = row.GetElementsByTagName("td");
                     if (tds.Length == th.Length)
                     {
+                        var a = row.GetElementsByTagName("a").FirstOrDefault();
+                        complectation.Links.Add(a.GetAttribute("href"));
+                        
                         for (var i = 0; i < tds.Length; i++)
                         {
                             var div = tds[i].GetElementsByTagName("div")?.FirstOrDefault();
                             complectation.Columns[i].Records.Add(div?.TextContent);
-                            //Console.Write(div?.GetAttribute("class"));
-                            //Console.WriteLine(div?.TextContent);
                         }
                     }
                 }
-                complectation.model = model;
+                complectation.Model = model;
 
                 res.Add(complectation);
             }

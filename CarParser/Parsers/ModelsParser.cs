@@ -44,7 +44,6 @@ namespace CarParser.Parsers
                         var modelCode = modelCodes[i].TextContent;
 
                         res.Add(new Model(name, modelCode, dataRange, link, id));
-                        //res.Append(new Model(name, modelCode, dataRange, link, id));
                     }
                 }
             }
