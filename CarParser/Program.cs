@@ -26,16 +26,16 @@ namespace CarParser
             var content = await ContentLoader.GetContent("/toyota/?function=getModels&market=EU");
             var ModelsParser = new ModelsParser(content);
             var models = ModelsParser.Parse();
-            //Model.AddToDatabase(models, connection);
+            Model.AddToDatabase(models, connection);
             Console.WriteLine(models.Count + " items added");
             #endregion
             #region Complectations
             Console.WriteLine("Complectations");
             content = await ContentLoader.GetContent(models.FirstOrDefault().Link);
             var ComplectationsParser = new ComplectationParser();
+            var complectations = await ComplectationsParser.ParseFromModels(models);
+            //var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
 
-            var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
-            //var complectations = await ComplectationsParser.ParseFromModels(models);
 
             foreach (var complectation in complectations)
             {
@@ -43,15 +43,15 @@ namespace CarParser
                 complectation.AddToDatabase(connection);
             }
             #endregion
-            #region Groups  
-            Console.WriteLine("Groups");
-            var groupParser = new GroupParser();
-            var groups = await groupParser.ParseFromComplectation(complectations.FirstOrDefault());
-            foreach (var group in groups)
-            {
-                Console.WriteLine(group);
-            }
-            #endregion
+            //#region Groups  
+            //Console.WriteLine("Groups");
+            //var groupParser = new GroupParser();
+            //var groups = await groupParser.ParseFromComplectation(complectations.FirstOrDefault());
+            //foreach (var group in groups)
+            //{
+            //    Console.WriteLine(group);
+            //}
+            //#endregion
 
 
         }

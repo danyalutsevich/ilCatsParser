@@ -1,9 +1,9 @@
-﻿--CREATE TABLE Models (
---	id NVARCHAR(400) PRIMARY KEY,
---	name TEXT NOT NULL,
---	model_code TEXT NOT NULL,
---	date_range TEXT NOT NULL,
---);
+﻿CREATE TABLE Models (
+	id NVARCHAR(400) PRIMARY KEY,
+	name TEXT NOT NULL,
+	model_code TEXT NOT NULL,
+	date_range TEXT NOT NULL,
+);
 
 --DROP TABLE Models
 --CREATE TABLE [34] ([dateRange] NVARCHAR(100))
@@ -23,4 +23,8 @@
 --INSERT INTO KEYS (name,age) VALUES ('John', 21)
 
 --DROP TABLE [671440]
-SELECT * FROM [671440]
+--SELECT * FROM [117520]
+
+--SELECT  'DROP TABLE [' + name + '];'
+--FROM    sys.tables
+

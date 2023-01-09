@@ -9,44 +9,56 @@ using System.Threading.Tasks;
 
 namespace CarParser.Models
 {
-    class Column
+
+    class Row
     {
-        public Column()
+        public Row()
         {
             Records = new List<string>();
+            Link = string.Empty;
         }
-        public string? Title { get; set; }
-        public List<string>? Records { get; set; }
+
+        public List<string> Records { get; set; }
+        public string Link { get; set; }
+        public Group Group { get; set; }
+
+        public string ToString(string prefix = "", string postfix = "", bool removeLastChar = false)
+        {
+            var sb = new StringBuilder();
+            foreach (var record in Records)
+            {
+                sb.Append($"{prefix}{record}{postfix}");
+            }
+            if (removeLastChar)
+            {
+                sb.Remove(sb.Length - 1, 1);
+            }
+            return sb.ToString();
+        }
     }
 
     class Complectation
     {
         public Complectation()
         {
-            Columns = new List<Column>();
-            Links = new List<string>();
-            Groups = new List<Group>();
+            Rows = new List<Row>();
+            Header = new Row();
         }
 
-        public List<Column>? Columns { get; set; }
+        public List<Row> Rows { get; set; }
+        public Row Header { get; set; }
+
         public Model Model { get; set; }
-        public List<string> Links { get; set; }
-        public List<Group> Groups { get; set; }
 
         public void AddToDatabase(SqlConnection connection)
         {
             CreateTable(connection);
             try
             {
-                for (var i = 0; i < Columns[0].Records.Count; i++)
+                foreach (var row in Rows)
                 {
                     var command = new StringBuilder($"INSERT INTO [{Model.Id}] VALUES (");
-                    foreach (var column in Columns)
-                    {
-                        command.Append($"'{column.Records[i]}',");
-                    }
-
-                    command.Remove(command.Length - 1, 1); // remove last comma
+                    command.Append(row.ToString("'", "',", true));
                     command.Append(")");
                     var sqlCommand = new SqlCommand(command.ToString(), connection);
                     sqlCommand.ExecuteNonQuery();
@@ -63,9 +75,7 @@ namespace CarParser.Models
             try
             {
                 var command = new StringBuilder($"CREATE TABLE [{Model.Id}] (");
-
-                var columns = GetColumns("[", "] NVARCHAR(100),");
-                command.Append(columns);
+                command.Append(Header.ToString("[", "] NVARCHAR(100),", true));
                 command.Append(")");
 
                 var sqlCommand = new SqlCommand(command.ToString(), connection);
@@ -82,8 +92,7 @@ namespace CarParser.Models
         {
             try
             {
-                var command = new StringBuilder($"CREATE UNIQUE INDEX table_index ON [{Model.Id}]({GetColumns("[", "],")}) ");
-                command = command.Remove(command.Length - 3, 1); // remove last comma
+                var command = new StringBuilder($"CREATE UNIQUE INDEX table_index ON [{Model.Id}]({Header.ToString("[", "],", true)})");
                 var sqlCommand = new SqlCommand(command.ToString(), connection);
                 sqlCommand.ExecuteNonQuery();
             }
@@ -93,32 +102,16 @@ namespace CarParser.Models
             }
         }
 
-        private string GetColumns(string prefix, string postfix)
-        {
-            var result = new StringBuilder();
-            foreach (var column in Columns)
-            {
-                result.Append($"{prefix}{column.Title}{postfix}");
-            }
-            return result.ToString();
-        }
-
         public override string ToString()
         {
             var res = new StringBuilder();
-            foreach (var column in Columns)
+            res.AppendLine(Header.ToString(postfix: " | "));
+
+            foreach (var row in Rows)
             {
-                res.Append(column.Title + " ");
+                res.AppendLine(row.ToString(postfix: " | "));
             }
-            for (var i = 0; i < Columns[0].Records.Count; i++)
-            {
-                res.Append("\n");
-                res.AppendLine($"Link: {Links[i]}");
-                foreach (var column in Columns)
-                {
-                    res.Append(column.Records[i] + " ");
-                }
-            }
+
             return res.ToString();
         }
     }

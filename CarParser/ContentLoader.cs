@@ -13,11 +13,20 @@ namespace CarParser
 
         public static async Task<string> GetContent(string uri)
         {
-            using (var web = new WebClient())
+            try
             {
-                var url = $"{BaseUrl}/{uri}";
-                var content = await web.DownloadStringTaskAsync(url);
-                return content;
+
+                using (var web = new WebClient())
+                {
+                    var url = $"{BaseUrl}/{uri}";
+                    var content = await web.DownloadStringTaskAsync(url);
+                    return content;
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(uri + " " + ex.Message);
+                return string.Empty;
             }
         }
     }

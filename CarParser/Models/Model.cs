@@ -32,12 +32,10 @@ namespace CarParser.Models
 
         public static void AddToDatabase(List<Model> models,SqlConnection connection)
         {
-
             foreach (var model in models)
             {
                 using (var command = new SqlCommand("INSERT INTO Models (id, name, model_code, date_range) VALUES (@id,@name,@model_code,@date_range)", connection))
                 {
-
                     command.Parameters.AddWithValue("@id", model.Id);
                     command.Parameters.AddWithValue("@model_code", model.ModelCode);
                     command.Parameters.AddWithValue("@date_range", model.DateRange);
@@ -46,9 +44,6 @@ namespace CarParser.Models
                     command.ExecuteNonQuery();
                 }
             }
-
-
         }
-
     }
 }

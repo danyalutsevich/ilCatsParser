@@ -13,15 +13,15 @@ namespace CarParser.Parsers
     {
         public async Task<List<Group>> ParseFromComplectation(Complectation complectation)
         {
-            var res = new List<Group>();
+            var AllGroups = new List<Group>();
             var tasks = new List<Task>();
 
-            foreach (var link in complectation.Links)
+            foreach (var row in complectation.Rows)
             {
                 Console.WriteLine("request");
                 tasks.Add(Task.Run(async () =>
                 {
-                    var content = await ContentLoader.GetContent(link);
+                    var content = await ContentLoader.GetContent(row.Link);
                     var parser = new HtmlParser();
                     var document = parser.ParseDocument(content);
                     var divS = document.GetElementsByClassName("name");
@@ -33,14 +33,14 @@ namespace CarParser.Parsers
                         group.Names.Add(a.TextContent);
                         group.Links.Add(a.GetAttribute("href"));
                     }
-                    res.Add(group);
+                    row.Group = group;
+                    AllGroups.Add(group);
                     Console.WriteLine("parsed");
                 }));
                 await Task.Delay(1000);
             }
             Task.WaitAll(tasks.ToArray());
-            complectation.Groups.AddRange(res);
-            return res;
+            return AllGroups;
         }
     }
 }
