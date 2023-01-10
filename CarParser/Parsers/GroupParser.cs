@@ -26,7 +26,8 @@ namespace CarParser.Parsers
                     var document = parser.ParseDocument(content);
                     var divS = document.GetElementsByClassName("name");
                     var group = new Group();
-
+                    group.ComplectationModelCode = row.Records[0];
+                    
                     foreach (var div in divS)
                     {
                         var a = div.GetElementsByTagName("a").FirstOrDefault();

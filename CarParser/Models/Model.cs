@@ -30,18 +30,23 @@ namespace CarParser.Models
             return $"Name: {Name}, ModelCode: {ModelCode}, DateRange: {DateRange}, Id: {Id}, Link: {Link}";
         }
 
-        public static void AddToDatabase(List<Model> models,SqlConnection connection)
+        public static void AddToDatabase(List<Model> models, SqlConnection connection)
         {
             foreach (var model in models)
             {
-                using (var command = new SqlCommand("INSERT INTO Models (id, name, model_code, date_range) VALUES (@id,@name,@model_code,@date_range)", connection))
+                try
                 {
+                    var command = new SqlCommand("INSERT INTO Models (id, name, model_code, date_range) VALUES (@id,@name,@model_code,@date_range)", connection);
                     command.Parameters.AddWithValue("@id", model.Id);
                     command.Parameters.AddWithValue("@model_code", model.ModelCode);
                     command.Parameters.AddWithValue("@date_range", model.DateRange);
                     command.Parameters.AddWithValue("@name", model.Name);
 
                     command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
