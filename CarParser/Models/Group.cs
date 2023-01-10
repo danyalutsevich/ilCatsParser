@@ -18,7 +18,7 @@ namespace CarParser.Models
 
         public List<string> Names { get; set; }
         public List<string> Links { get; set; }
-        public string ComplectationModelCode { get; set; }
+        public Row Row { get; set; }
 
         public override string ToString()
         {
@@ -37,10 +37,9 @@ namespace CarParser.Models
             {
                 try
                 {
-                    var command = new SqlCommand("INSERT INTO @table_name (name,link) VALUES (@name,@link)", connection);
+                    var command = new SqlCommand($"INSERT INTO [{Row.Records[0]}] (name,link) VALUES (@name,@link)", connection);
                     command.Parameters.AddWithValue("@name", Names[i]);
                     command.Parameters.AddWithValue("@link", Links[i]);
-                    command.Parameters.AddWithValue("@table_name", ComplectationModelCode);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
@@ -54,8 +53,8 @@ namespace CarParser.Models
         {
             try
             {
-                var command = new SqlCommand("CREATE TABLE @table_name (name NVARCHAR(200), link NVARCHAR(200))", connection);
-                command.Parameters.AddWithValue("@table_name", ComplectationModelCode);
+                var command = new SqlCommand($"CREATE TABLE [{Row.Records[0]}] (name NVARCHAR(200), link NVARCHAR(200))", connection);
+                //command.Parameters.AddWithValue("@table_name", ComplectationModelCode);
                 command.ExecuteNonQuery();
             }
             catch (Exception ex)

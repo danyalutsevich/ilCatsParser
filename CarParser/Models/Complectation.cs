@@ -21,6 +21,12 @@ namespace CarParser.Models
         public List<string> Records { get; set; }
         public string Link { get; set; }
         public Group Group { get; set; }
+        public Complectation Complectation { get; set; }
+
+        public string GetLink()
+        {
+            return $"/toyota/?function=getGroups&market=EU&model={Complectation.Model.Id}&modification={Records[0]}";
+        }
 
         public string ToString(string prefix = "", string postfix = "", bool removeLastChar = false)
         {

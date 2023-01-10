@@ -33,10 +33,10 @@ namespace CarParser
             
             #region Complectations
             Console.WriteLine("Complectations");
-            content = await ContentLoader.GetContent(models.FirstOrDefault().Link);
+            content = await ContentLoader.GetContent(models.FirstOrDefault().GetLink());
             var ComplectationsParser = new ComplectationParser();
-            //var complectations = await ComplectationsParser.ParseFromModels(models);
-            var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
+            var complectations = await ComplectationsParser.ParseFromModels(models);
+            //var complectations = await ComplectationsParser.ParseFromModels(new List<Model> { models.FirstOrDefault() });
 
 
             foreach (var complectation in complectations)
@@ -49,7 +49,15 @@ namespace CarParser
             #region Groups  
             Console.WriteLine("Groups");
             var groupParser = new GroupParser();
-            var groups = await groupParser.ParseFromComplectation(complectations.FirstOrDefault());
+            
+            List<Group> groups = new List<Group>();
+            //var groups = await groupParser.ParseFromComplectation(complectations.FirstOrDefault());
+            
+            foreach (var complectation in complectations)
+            {
+                 groups.AddRange(await groupParser.ParseFromComplectation(complectation));
+            }
+            
             foreach (var group in groups)
             {
                 Console.WriteLine(group);

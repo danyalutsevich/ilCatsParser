@@ -14,20 +14,25 @@ namespace CarParser.Models
         public string ModelCode { get; set; }
         public string DateRange { get; set; }
         public string Id { get; set; }
-        public string Link { get; set; }
+        //public string Link { get; set; }
 
         public Model(string name, string modelCode, string dateRange, string link, string id)
         {
             Name = name;
             ModelCode = modelCode;
             DateRange = dateRange;
-            Link = link;
+            //Link = link;
             Id = id;
+        }
+
+        public string GetLink()
+        {
+            return $"/toyota/?function=getComplectations&market=EU&model={Id}";
         }
 
         public override string ToString()
         {
-            return $"Name: {Name}, ModelCode: {ModelCode}, DateRange: {DateRange}, Id: {Id}, Link: {Link}";
+            return $"Name: {Name}, ModelCode: {ModelCode}, DateRange: {DateRange}, Id: {Id}, Link: {GetLink()}";
         }
 
         public static void AddToDatabase(List<Model> models, SqlConnection connection)

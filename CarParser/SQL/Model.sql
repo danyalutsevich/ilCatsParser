@@ -1,4 +1,6 @@
-﻿--INSERT INTO Models (id, name, model_code, date_range) VALUES (662420, 'RAV4', 'ACA2#', '08.2000 - 11.2005');
-
-SELECT * FROM Models
---DELETE FROM Models
+﻿CREATE TABLE Models (
+	id NVARCHAR(400) PRIMARY KEY,
+	name TEXT NOT NULL,
+	model_code TEXT NOT NULL,
+	date_range TEXT NOT NULL,
+);

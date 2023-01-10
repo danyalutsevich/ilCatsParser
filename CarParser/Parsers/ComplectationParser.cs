@@ -30,7 +30,7 @@ namespace CarParser.Parsers
                 {
                     Console.WriteLine("request");
                     var complectation = new Complectation();
-                    var content = await ContentLoader.GetContent(model.Link);
+                    var content = await ContentLoader.GetContent(model.GetLink());
                     document = Parser.ParseDocument(content);
 
                     // First table on a page thats what we looking for
@@ -52,7 +52,7 @@ namespace CarParser.Parsers
                     foreach (var row in rows.Skip(1)) // Skip 1 cause first row is a headers
                     {
                         var record = new Row();
-
+                        record.Complectation = complectation;
                         var tdS = row.GetElementsByTagName("td");
                         if (tdS.Length == thS.Length)
                         {
